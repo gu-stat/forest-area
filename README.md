@@ -644,4 +644,5 @@ for (i in 1985:2017) {
 ```
 <img src="https://raw.githubusercontent.com/gu-stat/forest-area/master/gif/Y1985.png"/>
 
-<img src="https://raw.githubusercontent.com/gu-stat/forest-area/master/gif/Y2017.png""/>
+
+<img src="https://raw.githubusercontent.com/gu-stat/forest-area/master/gif/Y2017.png"/>
