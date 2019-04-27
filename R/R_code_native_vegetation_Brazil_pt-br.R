@@ -164,7 +164,7 @@ map.labels <- c("0", "", "10%", rep("",3), "50%", rep("",3), "90%", "")
 
 map.theme <-
   theme(
-    text = element_text(size = 13, family = "Lato", color = "#f2efef"),
+    text = element_text(size = 12, family = "Lato", color = "#f2efef"),
     axis.text = element_blank(),
     axis.title.x = element_blank(),
     axis.title.y = element_blank(),
@@ -336,7 +336,7 @@ plot.map.forest <- function(){
   }
 }
 
-### \____ Create GIF ----
+### \____ Criar GIF ----
 ### O comando abaixo salvara um arquivo gif de nome forest_animation_pt-br.gif 
 ### no seu working directory
 
@@ -349,7 +349,7 @@ gif_file <-
 
 utils::browseURL(gif_file)
 
-### \____ Create Static Files ----
+### \____ Criar Mapas Estaticos ----
 #install.packages("Cairo")
 library("Cairo")
 
