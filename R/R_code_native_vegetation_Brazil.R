@@ -341,7 +341,7 @@ plot.map.forest <- function(){
 gif_file <-
   gifski::save_gif(
     expr = plot.map.forest(),
-    gif_file = "forest_animation4.gif",
+    gif_file = "forest_animation.gif",
     delay = 0.75, width = 738, height = 788, res = 100
   )
 
