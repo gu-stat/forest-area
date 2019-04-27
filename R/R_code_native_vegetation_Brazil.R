@@ -123,7 +123,7 @@ df.nat.forest.AREA <-
 # Map                                                                       ----
 # ************************************************************************* ----
 
-## \__ Function that Joins Map Data by Municipality with Forest Area Data ----
+## \__ Function that Joins Map Data by City with Forest Area Data ----
 
 create.map.df <- function(DATA){
   
@@ -185,7 +185,7 @@ map.theme <-
 
 ### \____ Function for GIF ----
 plot.map.forest <- function(){
-  for (i in 1985:1986) {
+  for (i in 1985:2017) {
     
     lost.area.year.km2 <-
       round(
@@ -197,12 +197,15 @@ plot.map.forest <- function(){
     lost.area.year.mi2 <- round(lost.area.year.km2/2.59, 2)
     
     map.forest <-
+      # MAP
       ggplot(mapping = aes(x = long, y = lat, group = group)) +
+      # MAP WITH TRANSPARENT CITY LINES
       geom_polygon(
         data = df.map.ggplot,
         aes_string(fill = paste0("X",i)),
         color = "transparent"
       ) +
+      # LEGEND
       scale_fill_manual(
         values = map.colors,
         drop = FALSE,
@@ -217,24 +220,43 @@ plot.map.forest <- function(){
           label.vjust = 2.5
         )
       ) +
+      # MAP LIMITS
+      xlim(range(df.map.ggplot$long)) +
+      ylim(range(df.map.ggplot$lat)) +
+      coord_map() +
+      # ADD TITLE AND CAPTIONS
+      labs(
+        title = "Percentage of City Area Covered By Native Vegetation, Brazil.",
+        caption = paste0("Map: Gustavo Varela-Alvarenga - ogustavo.com \n \n ",
+                         "Data: MapBiomas v.3.1 - mapbiomas.org & ",
+                         "IBGE - www.ibge.gov.br ")
+      ) +
+      # ADD THEME
+      map.theme +
+      # ADD ANNOTATIONS
+      ## WORD YEAR
       annotate(
         geom = "text", x = -44.1, y = 2.4, size = 4, family = "Lato",
         color = "#f2efef", label = "year", angle = 90
       ) +
+      ## ACTUAL YEAR
       annotate(
         geom = "text", x = -40, y = 2.5, size = 10, family = "Lato",
         color = "#f2efef", label = paste0(i)
       ) +
+      ## TITLE - TABLE ON THE LEFT
       annotate(
         geom = "text", x = -68.5, y = -26, size = 4, family = "Lato",
         color = "#f2efef", hjust = 0.5,
         label =
           paste0("Total Area of Native \n", "Vegetation Lost Since 1985")
       ) +
+      ## LINE BELOW TITLE
       annotate(
         geom = "segment", x = -64.5, xend = -72.5, y = -28, yend = -28,
         linetype = "solid", color = "#f2efef"
       ) +
+      ## VALUES IN KM2 WITH . TO MARK THOUSANDS
       annotate(
         geom = "text", x = -68.5, y = -29, size = 4.5, family = "Lato",
         color = "#f2efef", hjust = 0.5,
@@ -245,6 +267,7 @@ plot.map.forest <- function(){
                         " sq km")
           )
       ) +
+      ## VALUES IN MI2 WITH , TO MARK THOUSANDS
       annotate(
         geom = "text", x = -68.5, y = -31, size = 4.5, family = "Lato",
         color = "#f2efef", hjust = 0.5,
@@ -254,23 +277,28 @@ plot.map.forest <- function(){
                         " sq miles")
           )
       ) +
+      ## LINE BELOW TABLE
       annotate(
         geom = "segment", x = -64.5, xend = -72.5, y = -32, yend = -32,
         linetype = "solid", color = "#f2efef"
       ) +
+      ## TITLE - TABLE ON THE RIGHT
       annotate(
         geom = "text", x = -39, y = -26, size = 4, family = "Lato",
         color = "#f2efef", hjust = 0.5,
         label =  paste0("Lost Area as \n", "% of the Area of")
       ) +
+      ## LINE BELOW TITLE
       annotate(
         geom = "segment", x = -35, xend = -43, y = -28, yend = -28,
         linetype = "solid", color = "#f2efef"
       ) +
+      ## ADD WORD TEXAS
       annotate(
         geom = "text", x = -41, y = -29, size = 4.5, family = "Lato",
         color = "#f2efef", label =  "Texas       : "
       ) +
+      ## ADD VALUE FOR TEXAS
       annotate(
         geom = "text", x = -34, y = -29, size = 4.5, family = "Lato",
         color = "#f2efef", hjust = 1,
@@ -280,10 +308,12 @@ plot.map.forest <- function(){
             paste0(round(lost.area.year.km2/696241, 2) * 100, "%")
           )
       ) +
+      ## ADD WORD GERMANY
       annotate(
         geom = "text", x = -41, y = -31, size = 4.5, family = "Lato",
         color = "#f2efef", label =  "Germany : "
       ) +
+      ## ADD VALUE FOR GERMANY
       annotate(
         geom = "text", x = -34, y = -31, size = 4.5, family = "Lato",
         color = "#f2efef", hjust = 1,
@@ -293,20 +323,11 @@ plot.map.forest <- function(){
             paste0(round(lost.area.year.km2/357386, 2) * 100, "%")
           )
       ) +
+      ## LINE BELOW TABLE
       annotate(
         geom = "segment", x = -35, xend = -43, y = -32, yend = -32,
         linetype = "solid", color = "#f2efef"
-      ) +
-      xlim(range(df.map.ggplot$long)) +
-      ylim(range(df.map.ggplot$lat)) +
-      labs(
-        title = "Percentage of City Area Covered By Native Vegetation, Brazil.",
-        caption = paste0("Map: Gustavo Varela-Alvarenga - ogustavo.com \n \n ",
-                         "Data: MapBiomas v.3.1 - mapbiomas.org & ",
-                         "IBGE - www.ibge.gov.br ")
-      ) +
-      coord_map() +
-      map.theme
+      )
     
     print(map.forest)
     
@@ -325,3 +346,161 @@ gif_file <-
   )
 
 utils::browseURL(gif_file)
+
+### \____ Create Static Files ----
+#install.packages("Cairo")
+library("Cairo")
+
+for (i in 1985:2017) {
+  
+  lost.area.year.km2 <-
+    round(
+      sum(-(df.nat.forest %>% summarize_at(paste0(i),sum)/100),
+          df.nat.forest %>% summarize_at(paste0(1985),sum)/100)
+      ,2
+    )
+  
+  lost.area.year.mi2 <- round(lost.area.year.km2/2.59, 2)
+  
+  map.forest <-
+    # MAP
+    ggplot(mapping = aes(x = long, y = lat, group = group)) +
+    # MAP WITH TRANSPARENT CITY LINES
+    geom_polygon(
+      data = df.map.ggplot,
+      aes_string(fill = paste0("X",i)),
+      color = "transparent"
+    ) +
+    # LEGEND
+    scale_fill_manual(
+      values = map.colors,
+      drop = FALSE,
+      na.value = "black",
+      na.translate = FALSE,
+      name = "",
+      label = map.labels,
+      guide = guide_legend(
+        direction = "vertical",
+        ncol = 1,
+        reverse = TRUE,
+        label.vjust = 2.5
+      )
+    ) +
+    # MAP LIMITS
+    xlim(range(df.map.ggplot$long)) +
+    ylim(range(df.map.ggplot$lat)) +
+    coord_map() +
+    # ADD TITLE AND CAPTIONS
+    labs(
+      title = "Percentage of City Area Covered By Native Vegetation, Brazil.",
+      caption = paste0("Map: Gustavo Varela-Alvarenga - ogustavo.com \n \n ",
+                       "Data: MapBiomas v.3.1 - mapbiomas.org & ",
+                       "IBGE - www.ibge.gov.br ")
+    ) +
+    # ADD THEME
+    map.theme +
+    # ADD ANNOTATIONS
+    ## WORD YEAR
+    annotate(
+      geom = "text", x = -44.1, y = 2.4, size = 4, family = "Lato",
+      color = "#f2efef", label = "year", angle = 90
+    ) +
+    ## ACTUAL YEAR
+    annotate(
+      geom = "text", x = -40, y = 2.5, size = 10, family = "Lato",
+      color = "#f2efef", label = paste0(i)
+    ) +
+    ## TITLE - TABLE ON THE LEFT
+    annotate(
+      geom = "text", x = -68.5, y = -26, size = 4, family = "Lato",
+      color = "#f2efef", hjust = 0.5,
+      label =
+        paste0("Total Area of Native \n", "Vegetation Lost Since 1985")
+    ) +
+    ## LINE BELOW TITLE
+    annotate(
+      geom = "segment", x = -64.5, xend = -72.5, y = -28, yend = -28,
+      linetype = "solid", color = "#f2efef"
+    ) +
+    ## VALUES IN KM2 WITH . TO MARK THOUSANDS
+    annotate(
+      geom = "text", x = -68.5, y = -29, size = 4.5, family = "Lato",
+      color = "#f2efef", hjust = 0.5,
+      label =
+        ifelse(lost.area.year.km2 == 0, "0",
+               paste0(prettyNum(round(lost.area.year.km2, 0),
+                                big.mark=".", decimal.mark = ","),
+                      " sq km")
+        )
+    ) +
+    ## VALUES IN MI2 WITH , TO MARK THOUSANDS
+    annotate(
+      geom = "text", x = -68.5, y = -31, size = 4.5, family = "Lato",
+      color = "#f2efef", hjust = 0.5,
+      label =
+        ifelse(lost.area.year.mi2 == 0, "0",
+               paste0(prettyNum(round(lost.area.year.mi2, 0), big.mark=","),
+                      " sq miles")
+        )
+    ) +
+    ## LINE BELOW TABLE
+    annotate(
+      geom = "segment", x = -64.5, xend = -72.5, y = -32, yend = -32,
+      linetype = "solid", color = "#f2efef"
+    ) +
+    ## TITLE - TABLE ON THE RIGHT
+    annotate(
+      geom = "text", x = -39, y = -26, size = 4, family = "Lato",
+      color = "#f2efef", hjust = 0.5,
+      label =  paste0("Lost Area as \n", "% of the Area of")
+    ) +
+    ## LINE BELOW TITLE
+    annotate(
+      geom = "segment", x = -35, xend = -43, y = -28, yend = -28,
+      linetype = "solid", color = "#f2efef"
+    ) +
+    ## ADD WORD TEXAS
+    annotate(
+      geom = "text", x = -41, y = -29, size = 4.5, family = "Lato",
+      color = "#f2efef", label =  "Texas       : "
+    ) +
+    ## ADD VALUE FOR TEXAS
+    annotate(
+      geom = "text", x = -34, y = -29, size = 4.5, family = "Lato",
+      color = "#f2efef", hjust = 1,
+      label =
+        ifelse(
+          lost.area.year.km2 == 0, "0%",
+          paste0(round(lost.area.year.km2/696241, 2) * 100, "%")
+        )
+    ) +
+    ## ADD WORD GERMANY
+    annotate(
+      geom = "text", x = -41, y = -31, size = 4.5, family = "Lato",
+      color = "#f2efef", label =  "Germany : "
+    ) +
+    ## ADD VALUE FOR GERMANY
+    annotate(
+      geom = "text", x = -34, y = -31, size = 4.5, family = "Lato",
+      color = "#f2efef", hjust = 1,
+      label =
+        ifelse(
+          lost.area.year.km2 == 0, "0%",
+          paste0(round(lost.area.year.km2/357386, 2) * 100, "%")
+        )
+    ) +
+    ## LINE BELOW TABLE
+    annotate(
+      geom = "segment", x = -35, xend = -43, y = -32, yend = -32,
+      linetype = "solid", color = "#f2efef"
+    )
+  
+  ### Be mindful that this will save several png files named Y*.png, 
+  ### where * is the year, into your working directory
+  
+  ggsave(
+    paste0("Y",i,".png"), device="png", type="cairo", 
+    width = 7, height = 7
+  )
+  
+}
