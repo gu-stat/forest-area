@@ -36,6 +36,7 @@ library("openxlsx")
 library("tidyverse")
 library("brazilmaps")
 library("gifski")
+library("sf")
 
 # ************************************************************************* ----
 # Data Import                                                               ----
